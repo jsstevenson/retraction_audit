@@ -8,7 +8,7 @@ from wags_tails.utils.downloads import download_http
 from wags_tails.utils.versioning import DATE_VERSION_PATTERN
 
 
-def get_latest_data(silent: bool = False) -> Path:
+def get_latest_data(from_local: bool = False, silent: bool = False) -> Path:
     """TODO"""
 
     def _latest_version_cb() -> str:
@@ -51,4 +51,4 @@ def get_latest_data(silent: bool = False) -> Path:
         _download_cb,
     )
 
-    return cd.get_latest()[0]
+    return cd.get_latest(from_local=from_local)[0]

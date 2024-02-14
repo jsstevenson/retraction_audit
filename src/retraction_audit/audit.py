@@ -31,16 +31,17 @@ RetractionRecord = namedtuple(
 )
 
 
-class Audit:
-    """Handle retraction checks."""
+class RetractionLookup:
+    """Enable retraction lookup."""
 
-    data: ClassVar[Dict] = {}
+    doi_lookup: ClassVar[Dict[str, RetractionRecord]] = {}
+    pmid_lookup: ClassVar[Dict[str, RetractionRecord]] = {}
 
-    def __init__(self) -> None:
+    def __init__(self, use_local_data: bool = False) -> None:
         """Initialize Audit instance."""
-        retraction_file = get_latest_data()
+        retraction_file = get_latest_data(from_local=use_local_data)
 
-        with retraction_file.open() as f:
+        with retraction_file.open(encoding="ISO-8859-1") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 self._add_to_map(row)
@@ -74,17 +75,22 @@ class Audit:
             else FlagType.RETRACTED,
         )
         if pmid and pmid != "Unavailable":
-            key = pmid.lower()
-        elif doi and doi != "Unavailable":
-            key = doi.lower()
-        else:
-            return
-        self.data[key] = retraction_record
+            self.pmid_lookup[pmid.lower()] = retraction_record
+        if doi and doi != "Unavailable":
+            self.doi_lookup[doi.lower()] = retraction_record
 
-    def get_retraction_by_id(self, identifier: str) -> Optional[RetractionRecord]:
+    def get_retraction_by_pmid(self, pmid: str) -> Optional[RetractionRecord]:
         """Look up known retraction status given a PMID.
 
-        :param identifier: article ID
+        :param identifier: article PMID
         :return: retraction description, if available
         """
-        return self.data.get(identifier.lower())
+        return self.pmid_lookup.get(pmid.lower())
+
+    def get_retraction_by_doi(self, doi: str) -> Optional[RetractionRecord]:
+        """Look up known retraction status given a DOI.
+
+        :param identifier: article DOI
+        :return: retraction description, if available
+        """
+        return self.doi_lookup.get(doi.lower())
