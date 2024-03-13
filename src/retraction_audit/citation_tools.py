@@ -16,6 +16,7 @@ def get_pmid_from_doi(doi: str) -> str:
     :return: PMID (as string)
     :raise KeyError: if no PMID available
     """
+    Entrez.email = os.environ.get("NCBI_AUTH_EMAIL")
     with Entrez.esearch(db="pubmed", term=f"{doi}[DOI]") as h:
         result = Entrez.read(h)
     try:
