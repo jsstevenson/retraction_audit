@@ -20,7 +20,7 @@ classifiers = [
 requires-python = ">=3.8"
 description = "Check citations for associated retractions."
 license = {file = "LICENSE"}
-dependencies = ["wags-tails"]
+dependencies = ["wags-tails", "biopython"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
