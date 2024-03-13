@@ -5,10 +5,12 @@ lift over other kinds of citations.
 """
 
 import os
+from functools import lru_cache
 
 from Bio import Entrez
 
 
+@lru_cache
 def get_pmid_from_doi(doi: str) -> str:
     """Get PMID of article via DOI
 
@@ -25,6 +27,7 @@ def get_pmid_from_doi(doi: str) -> str:
         raise KeyError from e
 
 
+@lru_cache
 def get_pmid_from_pmcid(pmcid: str) -> str:
     """Get PMID of article via PMC ID
 
